@@ -1,8 +1,16 @@
+/**************************************************************************
+    Souliss - Espressif ESP8266-Esp12
+   
+    This is the Souliss Gateway, it has RGB LED, 
+    and we dont need to set Peer Node vNet address, all Peer Node must set their own address
+    and START_PeerJoin
+        
+***************************************************************************/
+
+// Configure the framework
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266mDNS.h>
-
-// Configure the framework
 #include "bconf/MCU_ESP8266.h"              // Load the code directly on the ESP8266
 #include "conf/Gateway.h" 
 #include "conf/DynamicAddressing.h"   
@@ -11,11 +19,7 @@
 
 boolean start;
 
-// Define the WiFi name and password
-//#define WIFICONF_INSKETCH
-
 // This identify the number of the LED logic  
-
 #define LEDCONTROL          0               // This is the memory slot for the logic that handle the light
 #define LEDRED              1               // This is the memory slot for the logic that handle the light
 #define LEDGREEN            2               // This is the memory slot for the logic that handle the light
@@ -149,6 +153,9 @@ void loop() {
  }      
         
 }
+
+//Funtion for SSID with web interface
+
 bool setup_esp() {
   
   WiFi.mode(WIFI_STA);  // Assume we've already been configured
