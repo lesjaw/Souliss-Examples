@@ -20,11 +20,11 @@
 boolean start;
 
 // This identify the number of the LED logic  
-#define LEDCONTROL          0               // This is the memory slot for the logic that handle the light
-#define LEDRED              1               // This is the memory slot for the logic that handle the light
-#define LEDGREEN            2               // This is the memory slot for the logic that handle the light
-#define LEDBLUE             3               // This is the memory slot for the logic that handle the light
-#define FAN                 5               // This is the memory slot for the logic that handle the light
+#define LEDCONTROL          0               // This is the memory slot for the logic that handle RGB
+#define LEDRED              1               // This is the memory slot for the logic that handle RED Led
+#define LEDGREEN            2               // This is the memory slot for the logic that handle Green Led
+#define LEDBLUE             3               // This is the memory slot for the logic that handle Blue Led
+#define FAN                 5               // This is the memory slot for the logic that handle Fan near the LED
 
 
 //PWM pin
