@@ -1,6 +1,5 @@
 # Souliss-Examples
 
-soulissapp
 SoulissApp is an Android Application that acts as client in Souliss Framework
 
 You can find it published on Play store; please note that the app itself is useless unless a souliss run-time is found on a local or remote network. Have a look at the documentation to get started with Souliss.
