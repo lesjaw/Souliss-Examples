@@ -1,0 +1,106 @@
+#include <WiFiClient.h>
+#include <EEPROM.h>
+#include <ESP8266mDNS.h>
+#include <WiFiManager.h>
+
+WiFiManager wifi(0);
+
+// Configure the framework
+#include "bconf/MCU_ESP8266.h"              // Load the code directly on the ESP8266
+#include "conf/Gateway.h" 
+#include "conf/DynamicAddressing.h"   
+#include "Souliss.h"
+
+// This identify the number of the LED logic  
+
+#define LEDCONTROL          0               // This is the memory slot for the logic that handle the light
+#define LEDRED              1               // This is the memory slot for the logic that handle the light
+#define LEDGREEN            2               // This is the memory slot for the logic that handle the light
+#define LEDBLUE             3               // This is the memory slot for the logic that handle the light
+#define FAN                 5               // This is the memory slot for the logic that handle the light
+
+
+//PWM pin
+#define LRED          13
+#define LGREEN        12
+#define LBLUE         14
+#define FANP          16
+#define BLINK         5
+
+
+
+void setup() {
+    Serial.begin(115200);
+    wifi.autoConnect("Souliss");
+    WiFi.mode(WIFI_STA);
+    
+    Initialize();
+
+        // Connect to the WiFi network and get an address from DHCP
+        GetIPAddress();                           
+        SetAsGateway(myvNet_dhcp);       // Set this node as gateway for SoulissApp  
+        SetAddressingServer();
+        // This is the vNet address for this node, used to communicate with other
+        // nodes in your Souliss network
+        SetAddress(0xAB01, 0xFF00, 0x0000); //RGB Led esp12
+
+        Set_LED_Strip(LEDCONTROL);
+        Set_DimmableLight(FAN); 
+   
+      pinMode(BLINK, OUTPUT);            // use pin 5 as Blink Led
+      pinMode(4, INPUT);                  // Hardware pulldown required
+      pinMode(LRED, OUTPUT);                 // Power the LED Red
+      pinMode(LGREEN, OUTPUT);                 // Power the LED Green
+      pinMode(LBLUE, OUTPUT);                 // Power the LED Blue
+      pinMode(FANP, OUTPUT);                // Power the LED Blue
+}
+
+void loop() { 
+ 
+  // Here we start to play
+            EXECUTEFAST() {                     
+                UPDATEFAST(); 
+
+// Read every 10ms the input state and send it to the other board  
+        FAST_10ms() {
+   
+            // Use Pin4 as command
+            if (DigIn(4, Souliss_T1n_ToggleCmd, LEDCONTROL))        
+            mInput(FAN) = mInput(LEDCONTROL);
+            
+            // Execute the logic that handle the LED
+            Logic_LED_Strip(LEDCONTROL);
+            
+            // Use the output values to control the PWM
+            analogWrite(LRED, mOutput(LEDRED)*4);
+            analogWrite(LGREEN, mOutput(LEDGREEN)*4);
+            analogWrite(LBLUE, mOutput(LEDBLUE)*4);
+            
+           Logic_DimmableLight(FAN);                        
+           analogWrite(FANP, mOutput(FAN+1)*4);
+        } 
+                
+                FAST_50ms(){
+                if (WiFi.status() == WL_CONNECTED) { 
+                digitalWrite(BLINK, !digitalRead(BLINK));
+                }
+        }
+           
+                // Here we handle here the communication with Android
+                FAST_GatewayComms();           
+         }
+         
+            EXECUTESLOW(){   
+                UPDATESLOW();
+    
+                SLOW_10s()  {
+     
+                Timer_DimmableLight(LEDCONTROL);
+                Timer_DimmableLight(FAN);  
+            
+          }     
+    }
+         
+ }      
+        
+
